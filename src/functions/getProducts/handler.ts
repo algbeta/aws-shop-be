@@ -1,12 +1,12 @@
-import type { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
-import { formatJSONResponse } from "@libs/api-gateway";
-import { middyfy } from "@libs/lambda";
+import type { ValidatedEventAPIGatewayProxyEvent } from "../../libs/api-gateway";
+import { formatJSONResponse } from "../../libs/api-gateway";
+import { middyfy } from "../../libs/lambda";
 import createError from "http-errors";
 import { productService } from "../../services";
 import { Product } from "../../services/product-service";
 import schema from "./schema";
 
-const getProducts: ValidatedEventAPIGatewayProxyEvent<
+export const getProducts: ValidatedEventAPIGatewayProxyEvent<
   typeof schema
 > = async () => {
   try {
