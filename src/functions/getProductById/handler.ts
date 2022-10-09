@@ -13,7 +13,7 @@ export const getProductById: ValidatedEventAPIGatewayProxyEvent<
   } = event;
   const product = productService.getProduct(id);
   if (!product) {
-    throw new createError.NotFound();
+    throw new createError.NotFound("Product not found");
   }
   return formatJSONResponse({
     items: [product],
