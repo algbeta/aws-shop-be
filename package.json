@@ -4,32 +4,41 @@
   "description": "Serverless aws-nodejs-typescript products service",
   "main": "serverless.ts",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "create-tables": "aws dynamodb create-table --cli-input-json file://src/db/products-template.json --region eu-central-1 && aws dynamodb create-table --cli-input-json file://src/db/stocks-template.json --region eu-central-1",
+    "fill-tables": "node ./src/db/fillTables.js",
+    "start": "sls offline start"
   },
   "engines": {
     "node": ">=14.15.0"
   },
   "dependencies": {
-    "@middy/core": "^2.5.3",
-    "@middy/http-cors": "^3.5.0",
+    "@middy/core": "^2.5.7",
+    "@middy/http-cors": "^3.6.0",
     "@middy/http-error-handler": "^3.5.0",
-    "@middy/http-json-body-parser": "^2.5.3",
-    "http-errors": "^2.0.0"
+    "@middy/http-json-body-parser": "^2.5.7",
+    "@middy/input-output-logger": "^3.6.0",
+    "aws-lambda": "^1.0.7",
+    "aws-sdk": "^2.1231.0",
+    "http-errors": "^2.0.0",
+    "pino": "^8.6.1",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@homeservenow/serverless-event-mocks": "^1.0.6",
     "@serverless/typescript": "^3.0.0",
-    "@types/aws-lambda": "^8.10.71",
+    "@types/aws-lambda": "^8.10.107",
     "@types/jest": "^29.1.2",
     "@types/node": "^14.14.25",
+    "@types/uuid": "^8.3.4",
+    "dotenv": "^16.0.3",
     "esbuild": "^0.14.11",
     "jest": "^29.1.2",
     "json-schema-to-ts": "^1.5.0",
     "serverless": "^3.0.0",
+    "serverless-dynamodb-local": "^0.2.40",
     "serverless-esbuild": "^1.23.3",
-    "serverless-offline": "^11.0.3",
-    "ts-jest": "^29.0.3",
-    "ts-node": "^10.4.0",
+    "serverless-offline": "^11.1.1",
     "tsconfig-paths": "^3.9.0",
     "typescript": "^4.1.3"
   },
