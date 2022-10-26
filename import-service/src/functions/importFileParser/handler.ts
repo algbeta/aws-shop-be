@@ -17,12 +17,27 @@ const importFileParser = async (
       Key: object.key,
     })).Body;
 
-    const parser = stream.pipe(parse({ delimiter: ',', columns: true }));
+    const parser = stream.pipe(parse());
     for await (const record of parser) {
       records.push(record);
     }
 
     console.log(records);
+
+    const parsedKey = `parsed/${object.key.split('/')[1]}`;
+
+    console.log(parsedKey);
+
+    await s3.copyObject({
+      Bucket: bucket.name,
+      CopySource: `${bucket.name}/${object.key}`,
+      Key: parsedKey
+    }).then(() => {
+      s3.deleteObject({
+        Bucket: bucket.name,
+        Key: object.key,
+      })
+    })
   } catch (error) {
     console.error('Error while downloading object from S3', error.message)
     throw error

@@ -33,6 +33,7 @@ const serverlessConfiguration: AWS = {
               "s3:GetObject",
               "s3:GetObjectAcl",
               "s3:DeleteObject",
+              "s3:CopyObject",
             ],
             Resource: `arn:aws:s3:::algbeta-import-service-bucket`,
           },
