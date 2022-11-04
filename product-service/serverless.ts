@@ -3,6 +3,7 @@ import type { AWS } from "@serverless/typescript";
 import getProductById from "@functions/getProductById";
 import getProducts from "@functions/getProducts";
 import createProduct from "@functions/createProduct";
+import catalogBatchProcess from "@functions/catalogBatchProcess";
 
 const localDynamoDBResources = {
   products: {
@@ -51,7 +52,50 @@ const localDynamoDBResources = {
   },
 };
 
-const resources = false ? { Resources: localDynamoDBResources} : {}
+const Queues = {
+  SQSQueue: {
+    Type: "AWS::SQS::Queue",
+    Properties: {
+      QueueName: "catalogItemsQueue",
+    },
+  },
+  SNSTopic: {
+    Type: "AWS::SNS::Topic",
+    Properties: {
+      TopicName: "catalogItemsTopic",
+    },
+  },
+  SNSSubscription: {
+    Type: "AWS::SNS::Subscription",
+    Properties: {
+      Endpoint: "gorbunovano@gmail.com",
+      Protocol: "email",
+      TopicArn: {
+        Ref: "SNSTopic",
+      },
+      FilterPolicy: {
+        total: [{ numeric: ["=", 5] }],
+      },
+    },
+  },
+  SNSSubscription2: {
+    Type: "AWS::SNS::Subscription",
+    Properties: {
+      Endpoint: "natallia_gorbunova@epam.com",
+      Protocol: "email",
+      TopicArn: {
+        Ref: "SNSTopic",
+      },
+      FilterPolicy: {
+        total: [{ "anything-but": [5] }],
+      },
+    },
+  },
+};
+
+const resources = false
+  ? { Resources: { ...localDynamoDBResources, ...Queues } }
+  : { Resources: Queues };
 
 const serverlessConfiguration: AWS = {
   service: "aws-shop-be",
@@ -73,7 +117,13 @@ const serverlessConfiguration: AWS = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
       NODE_OPTIONS: "--enable-source-maps --stack-trace-limit=1000",
-   },
+      SQS_URL: {
+        Ref: "SQSQueue",
+      },
+      SNS_ARN: {
+        Ref: "SNSTopic",
+      },
+    },
     iam: {
       role: {
         statements: [
@@ -99,12 +149,23 @@ const serverlessConfiguration: AWS = {
             ],
             Resource: `arn:aws:dynamodb:eu-central-1:${process.env.BD_ID}:table/stocks`,
           },
+          {
+            Effect: "Allow",
+            Action: ["sns:*"],
+            Resource: {
+              Ref: "SNSTopic",
+            },
+          },
         ],
       },
     },
   },
-  // import the function via paths
-  functions: { getProductById, getProducts, createProduct },
+  functions: {
+    getProductById,
+    getProducts,
+    createProduct,
+    catalogBatchProcess,
+  },
   package: { individually: true },
   custom: {
     esbuild: {
