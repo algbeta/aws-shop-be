@@ -1,6 +1,6 @@
 import type { S3Event } from "aws-lambda";
 import parse from "csv-parser";
-import { CORSConfigurationFilterSensitiveLog, S3 } from "@aws-sdk/client-s3";
+import { S3 } from "@aws-sdk/client-s3";
 import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
 
 const REGION = "eu-central-1";
