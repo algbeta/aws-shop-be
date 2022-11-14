@@ -1,12 +1,11 @@
 import type { AWS } from "@serverless/typescript";
 
-import importProductsFile from "@functions/importProductsFile";
-import importFileParser from "@functions/importFileParser";
+import basicAuthorizer from "@functions/basicAuthorizer";
 
 const serverlessConfiguration: AWS = {
-  service: "import-service",
+  service: "authorization-service",
   frameworkVersion: "3",
-  plugins: ["serverless-esbuild", "serverless-offline"],
+  plugins: ["serverless-esbuild"],
   provider: {
     name: "aws",
     region: "eu-central-1",
@@ -24,32 +23,15 @@ const serverlessConfiguration: AWS = {
         statements: [
           {
             Effect: "Allow",
-            Action: [
-              "s3:PutObject",
-              "s3:PutObjectAcl",
-              "s3:GetObject",
-              "s3:GetObjectAcl",
-              "s3:DeleteObject",
-              "s3:CopyObject",
-            ],
-            Resource: `arn:aws:s3:::algbeta-import-service-bucket`,
-          },
-          {
-            Effect: "Allow",
             Action: "lambda:InvokeFunction",
             Resource: "*",
           },
-          {
-            Effect: "Allow",
-            Action: ["sqs:SendMessage", "sqs:GetQueueUrl", "sqs:ListQueues"],
-            Resource: `arn:aws:sqs:eu-central-1:${process.env.QUEUE_ID}:catalogItemsQueue`,
-          }
         ],
       },
     },
   },
   // import the function via paths
-  functions: { importProductsFile, importFileParser },
+  functions: { basicAuthorizer },
   package: { individually: true },
   custom: {
     esbuild: {
