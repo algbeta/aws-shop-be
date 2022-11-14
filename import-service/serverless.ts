@@ -6,10 +6,7 @@ import importFileParser from "@functions/importFileParser";
 const serverlessConfiguration: AWS = {
   service: "import-service",
   frameworkVersion: "3",
-  plugins: [
-    "serverless-esbuild",
-    "serverless-offline",
-  ],
+  plugins: ["serverless-esbuild", "serverless-offline"],
   provider: {
     name: "aws",
     region: "eu-central-1",
@@ -36,6 +33,11 @@ const serverlessConfiguration: AWS = {
               "s3:CopyObject",
             ],
             Resource: `arn:aws:s3:::algbeta-import-service-bucket`,
+          },
+          {
+            Effect: "Allow",
+            Action: ["sqs:SendMessage", "sqs:GetQueueUrl", "sqs:ListQueues"],
+            Resource: `arn:aws:sqs:eu-central-1:${process.env.QUEUE_ID}:catalogItemsQueue`,
           },
         ],
       },
