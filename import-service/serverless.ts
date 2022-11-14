@@ -39,6 +39,11 @@ const serverlessConfiguration: AWS = {
             Action: "lambda:InvokeFunction",
             Resource: "*",
           },
+          {
+            Effect: "Allow",
+            Action: ["sqs:SendMessage", "sqs:GetQueueUrl", "sqs:ListQueues"],
+            Resource: `arn:aws:sqs:eu-central-1:${process.env.QUEUE_ID}:catalogItemsQueue`,
+          }
         ],
       },
     },
